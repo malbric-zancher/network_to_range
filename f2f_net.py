@@ -1,10 +1,7 @@
 #!/bin/python
 from netaddr import IPNetwork, IPAddress
 import sys
-'''
-TODO
-# get ipv6 to work too
-'''
+
 source_filename = sys.argv[1] # takes 1 argument = a filename preferably txt
 reading = open(source_filename, 'r').readlines() # opens it for reading line by line
 source_ip_list = [] # create empty list to store ranges in it
@@ -14,18 +11,18 @@ for i in reading:
         i = i.strip('\n')
         source_ip_list.append(i)
 
-for net_element in source_ip_list: # loop over networks list
-        network = IPNetwork(net_element) # translate networks to IP
-        ip_list = list(network) # create list from IPs
+for net_range in source_ip_list: # loop over networks list
+        net_network_addr = IPNetwork(net_range).network # use network address as 1st
+        net_broadcast_addr = IPNetwork(net_range).broadcast # use broadcast address as last
 
-        def ip_range(): # return pretty source network + 1st + last IP
-                return 'IP range for %s: %s-%s\n' % (
-                        net_element, ip_list[0], ip_list[-1]
+        def pretty_range():
+                return 'IP range for %s = %s-%s\n' % (
+                        net_range, net_network_addr, net_broadcast_addr
                 )
 
-        results = ip_range()
+        results = pretty_range()
         output_filename = 'output_range.txt'
 
-        f = open(output_filename, 'a') # 'w' will print only last value
+        f = open(output_filename, 'a') # 'w' will overwrite leaving only last value
         f.write(str(results))
         f.close()
